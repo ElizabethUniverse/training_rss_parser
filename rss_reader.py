@@ -23,7 +23,7 @@ args = parser.parse_args()
 if args.version:
     print("Current version: " + str(VERSION))
 if args.limit:
-    print('LIMIT of news: ' + str(args.limit))
+    print('News LIMIT: ' + str(args.limit))
 
 
 def log(message):
@@ -63,8 +63,8 @@ try:
                 if item.tag == 'title':
                     main_title = item.text
 
-        # Here we have a dictionary of articles
-        my_dict_articles = ClassNews.xml_arguments_for_class(root, 3)
+        # Here we have the dictionary of articles
+        my_dict_articles = ClassNews.xml_arguments_for_class(root, args.limit)
         # print(my_dict_articles)
 
         log('Print news:')
@@ -73,12 +73,12 @@ try:
         for article in my_articles:
             print(article)
     else:
-        print(rss_request.headers['content-type'])
+        log(rss_request.headers['content-type'])
         log('We received not an xml file from api, sorry')
     if args.json:
-        log('Print news in json format')
+        log('Print result as JSON in stdout')
         json_articles = json.dumps(my_dict_articles, indent=4)
-        print(json_articles)
+        log(json_articles)
 # except rre.NotRequest as exc:
 #     log(str(exc))
 except requests.exceptions.MissingSchema:
@@ -89,7 +89,6 @@ except requests.exceptions.ReadTimeout:
     log('Time to read is out')
 except requests.exceptions.HTTPError as httpserr:
     log("Sorry, page not found")
-    # print(httpserr.response.content)
 except requests.exceptions.InvalidURL:
     log("Sorry, that's not valid url")
 except requests.exceptions.ConnectionError:

@@ -5,7 +5,7 @@ links_template = '\"((http|https)://(\w|.)+?)\"'
 
 
 def xml_arguments_for_class(xml_string, limit):
-    """These function receive an xml and limit of articles and  to dictionary and returns list of dictionaries"""
+    """This function receive the xml and limit of articles and returns list of dictionaries"""
     dict_article_list = []
     for counter, neighbor in enumerate(xml_string.iter('item')):
         parser_dictionary = {}
@@ -14,7 +14,7 @@ def xml_arguments_for_class(xml_string, limit):
         text.ignore_links = True
         text.ignore_emphasis = True
         for child in neighbor:
-            # Here we create an article in the form of a dictionary
+            # Here we create the article in the form of a dictionary
             if child.tag == 'title':
                 parser_dictionary['title'] = text.handle(child.text).replace('\n', "")
 
@@ -40,7 +40,7 @@ def xml_arguments_for_class(xml_string, limit):
 
 
 def dicts_to_articles(dict_list):
-    """These function receive list of dictionaries and convert it to list of articles """
+    """This function receive list of dictionaries and convert it to list of articles """
     article_list = []
     for item in dict_list:
         article_list.append(MyArticle(item))
