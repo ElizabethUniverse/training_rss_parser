@@ -3,6 +3,7 @@ import re
 import xml.etree.ElementTree as ET
 import requests
 import json
+from datetime import datetime
 
 import RssReaderExceptions as rre
 import ClassNews
@@ -22,62 +23,69 @@ args = parser.parse_args()
 
 if args.version:
     print("Current version: "+str(VERSION))
-# if args.json:
-#     print('json')
-if args.verbose:
-    print('verbose')
 if args.limit:
-    print('LIMIT is: '+str(args.limit))
-
+    print('LIMIT of news: '+str(args.limit))
+def log(message):
+    '''logger'''
+    if args.verbose:
+        print('\n'+message+'\n')
 try:
     '''Check if the request is valid'''
-    if not re.match("(https|http):\/\/((\w+).)+(com|org|ru)(\/(\w+))+", args.sourse):
+    if not re.match("(https|http):\/\/((\w+).)+(com|org|ru|net)(\/(\w+))+", args.sourse):
         raise rre.NotRequest
-    #reque = requests.get(args.sourse, timeout=(1, 10))
 
     # Get request
+    log('Start parsing')
     rss_request = requests.get(args.sourse)
+    # to check ReadTimeout exception
+    #rss_request = requests.get(args.sourse, timeout=(1, 0.01))
 
     # Check status code
     status_code = rss_request.status_code
-    print(status_code)
+    log("Status code {}".format(status_code))
     # if status_code == 404:
     #     raise requests.exceptions.HTTPError
     rss_request.raise_for_status()
 
+    log('Parsing completed successfully')
     # Here we check the type of response. To correctly process it
-    print(rss_request.headers['content-type'])
-    root = ET.fromstring(rss_request.content)
+    if rss_request.headers['content-type'] == "application/xml":
+        root = ET.fromstring(rss_request.content)
 
-    # Here we get title of api
-    for child in root.iter('channel'):
-        for item in child:
-            if item.tag == 'title':
-                main_title = item.text
+        # Here we get title of api
+        for child in root.iter('channel'):
+            for item in child:
+                if item.tag == 'title':
+                    main_title = item.text
 
-    my_articles = ClassNews.xml_arguments_for_class(root, 10)
-    # Here we have a dictionary of articles
-    print(my_articles)
+        my_dict_articles = ClassNews.xml_arguments_for_class(root, 3)
+        # Here we have a dictionary of articles
+        #print(my_dict_articles)
 
-    print("\nFeed: {}".format(main_title))
-    for article in my_articles:
-        print(ClassNews.MyArticle(article))
+        log('Print news:')
+        print("\nFeed: {}".format(main_title))
+        my_articles = ClassNews.dicts_to_articles(my_dict_articles)
+        for article in my_articles:
+            print(article)
+    else:
+        print(rss_request.headers['content-type'])
     if args.json:
-        json_articles = json.dumps(my_articles, indent=4)
+        log('Print news in json format')
+        json_articles = json.dumps(my_dict_articles, indent=4)
         print(json_articles)
 except rre.NotRequest as exc:
-    print(str(exc))
+    log(str(exc))
 except requests.exceptions.ConnectTimeout:
-    print('Time to connect is out')
+    log('Time to connect is out')
 except requests.exceptions.ReadTimeout:
-    print('Time to read is out')
+    log('Time to read is out')
 except requests.exceptions.HTTPError as httpserr:
-    print("Sorry, page not found")
+    log("Sorry, page not found")
     print(httpserr.response.content)
 except requests.exceptions.InvalidURL:
-    print("Sorry, that's not valid url")
+    log("Sorry, that's not valid url")
 except requests.exceptions.ConnectionError:
-    print("Sorry, you have an proxy or SSL error")
+    log("Sorry, you have an proxy or SSL error")
     # A proxy or SSL error occurred.
 
 

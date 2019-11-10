@@ -1,16 +1,13 @@
 import re
 
-dict_article_list = []
-artilce_list = []
 
 article_template = '<\/a>([^>]*)<p>'
 links_template = '\"((http|https)://(\w|.)+?)\"'
 
 
 def xml_arguments_for_class(xml_string, limit):
-
     ''' These function receive an xml and limit of articles and  to dictionary and returns list of dictionaries'''
-
+    dict_article_list = []
     for counter, neighbor in enumerate(xml_string.iter('item')):
         parser_dictionary = {}
         for child in neighbor:
@@ -41,8 +38,10 @@ def xml_arguments_for_class(xml_string, limit):
 
 def dicts_to_articles(dict_list):
     '''These finction receive list of dictionaries and convert it to list of articles '''
+    artilce_list = []
     for item in dict_list:
         artilce_list.append(MyArticle(item))
+    return artilce_list
 
 
 class MyArticle:
@@ -59,6 +58,5 @@ class MyArticle:
         result_string_article += "Title: {}\nDate: {}\nLink: {}\n\n{}\n\n".format(self.title, self.date, self.link, self.article)
         for link_idx, link in enumerate(self.links_list):
             result_string_article+="[{}]: {}\n".format(link_idx+1, link)
-            #print("[{}]: {}\n".format(link_idx+1, link))
         result_string_article += '\n'
         return result_string_article
