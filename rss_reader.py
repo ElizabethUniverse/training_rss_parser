@@ -20,25 +20,29 @@ parser.add_argument('--limit', type=int, help='Limit news topics if this paramet
 
 args = parser.parse_args()
 
-
 if args.version:
-    print("Current version: "+str(VERSION))
+    print("Current version: " + str(VERSION))
 if args.limit:
-    print('LIMIT of news: '+str(args.limit))
+    print('LIMIT of news: ' + str(args.limit))
+
+
 def log(message):
-    '''logger'''
+    """Here we are print a log message"""
     if args.verbose:
-        print('\n'+message+'\n')
+        print('\n' + message + '\n')
+
+
 try:
-    '''Check if the request is valid'''
+    # Check if the request is valid
     # if not re.match("(https|http):\/\/((\w+).)+(com|org|ru|net)(\/(\w+))+", args.sourse):
     #     raise rre.NotRequest
 
     # Get request
     log('Start parsing')
     rss_request = requests.get(args.sourse)
+
     # to check ReadTimeout exception
-    #rss_request = requests.get(args.sourse, timeout=(1, 0.01))
+    # rss_request = requests.get(args.sourse, timeout=(1, 0.01))
 
     # Check status code
     status_code = rss_request.status_code
@@ -48,6 +52,7 @@ try:
     rss_request.raise_for_status()
 
     log('Parsing completed successfully')
+
     # Here we check the type of response. To correctly process it
     if rss_request.headers['content-type'] == "application/xml":
         root = ET.fromstring(rss_request.content)
@@ -58,9 +63,9 @@ try:
                 if item.tag == 'title':
                     main_title = item.text
 
-        my_dict_articles = ClassNews.xml_arguments_for_class(root, 3)
         # Here we have a dictionary of articles
-        #print(my_dict_articles)
+        my_dict_articles = ClassNews.xml_arguments_for_class(root, 3)
+        # print(my_dict_articles)
 
         log('Print news:')
         print("\nFeed: {}".format(main_title))
@@ -84,12 +89,9 @@ except requests.exceptions.ReadTimeout:
     log('Time to read is out')
 except requests.exceptions.HTTPError as httpserr:
     log("Sorry, page not found")
-    #print(httpserr.response.content)
+    # print(httpserr.response.content)
 except requests.exceptions.InvalidURL:
     log("Sorry, that's not valid url")
 except requests.exceptions.ConnectionError:
     log("Sorry, you have an proxy or SSL error")
     # A proxy or SSL error occurred.
-
-
-
