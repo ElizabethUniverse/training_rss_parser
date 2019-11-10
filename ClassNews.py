@@ -1,7 +1,6 @@
 import re
-
-
-article_template = '<\/a>([^>]*)<p>'
+#from html.parser import HTMLParser
+import html2text
 links_template = '\"((http|https)://(\w|.)+?)\"'
 
 
@@ -10,10 +9,15 @@ def xml_arguments_for_class(xml_string, limit):
     dict_article_list = []
     for counter, neighbor in enumerate(xml_string.iter('item')):
         parser_dictionary = {}
+        text = html2text.HTML2Text()
+        text.ignore_images = True
+        text.ignore_links = True
+        text.ignore_emphasis = True
         for child in neighbor:
             # Here we create an article in the form of a dictionary
             if child.tag == 'title':
-                parser_dictionary['title'] = child.text.replace('&#39;', "'").replace('&quot;', '"')
+                #parser_dictionary['title'] = child.text.replace('&#39;', "'").replace('&quot;', '"')
+                parser_dictionary['title'] = text.handle(child.text).replace('\n', "")
 
             if child.tag == 'pubDate':
                 parser_dictionary['date'] = child.text
@@ -22,7 +26,8 @@ def xml_arguments_for_class(xml_string, limit):
                 parser_dictionary['link'] = child.text
 
             if child.tag == 'description':
-                parser_dictionary['article'] = re.findall(article_template, child.text.replace('&#39;', "'").replace('&quot;', '"'))[0]
+                #parser_dictionary['article'] = re.findall(article_template, child.text.replace('&#39;', "'").replace('&quot;', '"'))[0]
+                parser_dictionary['article'] =text.handle(child.text).replace('\n', '')
 
                 # здесь мы ищем все ссылки, их шаблон задан в links_template и находиться ответ будет в группе 1
                 list_links = []
@@ -30,6 +35,13 @@ def xml_arguments_for_class(xml_string, limit):
                     list_links.append(group1.group(1))
                     parser_dictionary['links'] = list_links
                     # Еще добавить описание к картинкам
+
+
+                # parser = HTMLParser()
+                #
+                # print("Heeeeeeeey")
+                # print(parser.feed(child.text))
+                # print('Heeeeeeeey')
 
         dict_article_list.append(parser_dictionary)
         if limit == counter+1:
