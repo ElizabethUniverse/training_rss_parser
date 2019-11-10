@@ -31,8 +31,8 @@ def log(message):
         print('\n'+message+'\n')
 try:
     '''Check if the request is valid'''
-    if not re.match("(https|http):\/\/((\w+).)+(com|org|ru|net)(\/(\w+))+", args.sourse):
-        raise rre.NotRequest
+    # if not re.match("(https|http):\/\/((\w+).)+(com|org|ru|net)(\/(\w+))+", args.sourse):
+    #     raise rre.NotRequest
 
     # Get request
     log('Start parsing')
@@ -69,19 +69,22 @@ try:
             print(article)
     else:
         print(rss_request.headers['content-type'])
+        log('We received not an xml file from api, sorry')
     if args.json:
         log('Print news in json format')
         json_articles = json.dumps(my_dict_articles, indent=4)
         print(json_articles)
-except rre.NotRequest as exc:
-    log(str(exc))
+# except rre.NotRequest as exc:
+#     log(str(exc))
+except requests.exceptions.MissingSchema:
+    log('it is not http request!')
 except requests.exceptions.ConnectTimeout:
     log('Time to connect is out')
 except requests.exceptions.ReadTimeout:
     log('Time to read is out')
 except requests.exceptions.HTTPError as httpserr:
     log("Sorry, page not found")
-    print(httpserr.response.content)
+    #print(httpserr.response.content)
 except requests.exceptions.InvalidURL:
     log("Sorry, that's not valid url")
 except requests.exceptions.ConnectionError:
