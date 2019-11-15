@@ -28,11 +28,7 @@ def xml_arguments_for_class(xml_string, limit):
 
             if xml_news_item.tag == 'description':
                 parser_dictionary['article'] = text.handle(xml_news_item.text).replace('\n', '')
-
-                list_links = []
-                for group1 in re.finditer(LINKS_TEMPLATE, xml_news_item.text):
-                    list_links.append(group1.group(1))
-                parser_dictionary['links'] = list_links
+                parser_dictionary['links'] = xml_news_item.text.replace('\n', '')
 
         dict_article_list.append(parser_dictionary)
 
@@ -52,21 +48,16 @@ def dicts_to_articles(dict_list):
 class MyArticle:
     """This is news class, which receives dictionary and have title, date, link, article and links keys fields"""
     def __init__(self, article_dict):
-        link_temp = "\'((http|https)://(\w|.)+?)\'"
         self.date = article_dict['date']
         self.title = article_dict['title']
         self.link = article_dict['link']
         self.article = article_dict['article']
 
-        if type(article_dict['links']) == list:
-            self.links = article_dict['links']
-
-        if type(article_dict['links']) == str:
-            #print(article_dict['links'])
-            list_links = []
-            for group1 in re.finditer(link_temp, article_dict['links']):
-                list_links.append(group1.group(1))
-            self.links = list_links
+        article_dict['links'] = article_dict['links'].replace("\'", "\"")
+        list_links = []
+        for group1 in re.finditer(LINKS_TEMPLATE, article_dict['links']):
+            list_links.append(group1.group(1))
+        self.links = list_links
 
 
     def __str__(self):

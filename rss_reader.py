@@ -71,7 +71,6 @@ if __name__ == '__main__':
 
                 # Here we have the dictionary of articles
                 res_dict_articles = ClassNews.xml_arguments_for_class(root, args.limit)
-                #print(type(res_dict_articles))
 
                 logging.info('Print news:')
                 print("\nFeed: {}".format(main_title))
