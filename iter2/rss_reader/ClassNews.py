@@ -47,7 +47,6 @@ def dicts_to_articles(dict_list):
         article_list.append(MyArticle(item))
     return article_list
 
-@dataclass
 class MyArticle:
     """This is news class, which receives dictionary and have title, date, link, article and links keys fields"""
     def __init__(self, article_dict):
@@ -58,10 +57,15 @@ class MyArticle:
         self.links_list = article_dict['links']
 
     def __str__(self):
-        result_string_article = '\n'
-        result_string_article += "Title: {}\nDate: {}\nLink: {}\n\n{}\n\n".format(self.title, self.date, self.link,
-                                                                                  self.article)
-        for link_idx, link in enumerate(self.links_list):
-            result_string_article += "[{}]: {}\n".format(link_idx + 1, link)
+        result_string_article = "\nTitle: %s\nDate: %s\nLink: %s\n\n%s\n\n" % (self.title, self.date, self.link,
+                                                                               self.article)
+        for link_idx, link in enumerate(self.links):
+            result_string_article += "[%d]: %s\n" % (link_idx + 1, link)
         result_string_article += '\n'
         return result_string_article
+
+    def __eq__(self, other):
+        if self.article == other.article and self.title == other.title and self.link == other.link and \
+                self.date == other.date:
+            return True
+        return False

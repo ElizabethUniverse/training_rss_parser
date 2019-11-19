@@ -4,12 +4,12 @@ import requests
 import json
 import logging
 
-import ClassNews
+import rss_reader.ClassNews
 
 VERSION = 1.1
 
 
-def my_parser():
+def arg_parser():
     # Parse our arguments
     parser = argparse.ArgumentParser()
     parser.add_argument("sourse", help="RSS URL")
@@ -22,9 +22,9 @@ def my_parser():
     return args
 
 
-if __name__ == '__main__':
+def main():
     try:
-        args = my_parser()
+        args = arg_parser()
         logging_level = logging.CRITICAL
         if args.verbose:
             logging_level = logging.INFO
@@ -39,20 +39,18 @@ if __name__ == '__main__':
         logging.info('Start parsing')
         rss_request = requests.get(args.sourse)
 
-        # to check ReadTimeout exception
-        #rss_request = requests.get(args.sourse, timeout=(1, 0.01))
 
         # Check status code
         status_code = rss_request.status_code
         logging.info("Status code {}".format(status_code))
-        # if status_code == 404:
-        #     raise requests.exceptions.HTTPError
+
         rss_request.raise_for_status()
 
         logging.info('Parsing completed successfully')
 
         # Here we check the type of response. To correctly process it
         if rss_request.headers['content-type'] == "application/xml":
+            main_title = ''
             root = ET.fromstring(rss_request.content)
 
             # Here we get title of api
@@ -91,3 +89,7 @@ if __name__ == '__main__':
     except requests.exceptions.ConnectionError:
         logging.critical("Sorry, you have an proxy or SSL error")
         # A proxy or SSL error occurred.
+
+
+if __name__ == '__main__':
+    main()
