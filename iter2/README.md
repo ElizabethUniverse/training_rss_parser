@@ -42,10 +42,12 @@ to run rss parser on your computer you need to:
 4) run `$rss_reader https://news.yahoo.com/rss` --limit 2 --verbose
 
 ## Iteration 3
-News stored into csv cache now.
+News is stored in the csv cache in following format.  
+
+`date    title    link   article   list_links`
 
 To run application with updates:
 
 `$python rss_reader.py https://news.yahoo.com/rss --date 20191115`
 
---date argument correctly working without internet connection and with --verbose, --json, --limit LIMIT arguments
+--date argument works without internet connection and with --verbose, --json, --limit LIMIT arguments the same way 
