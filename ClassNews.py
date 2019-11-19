@@ -40,12 +40,18 @@ def dicts_to_articles(dict_list):
     """This function receive list of dictionaries and convert it to list of articles """
     article_list = []
     for item in dict_list:
-        article_list.append(MyArticle(item))
+        article_list.append(Article(item))
     return article_list
 
+def html_text_to_list_links(html_links):
+    html_links = html_links.replace("\'", "\"")
+    list_links = []
+    for group1 in re.finditer(LINKS_TEMPLATE, html_links):
+        list_links.append(group1.group(1))
+    return list_links
 
-@dataclass
-class MyArticle:
+
+class Article:
     """This is news class, which receives dictionary and have title, date, link, article and links keys fields"""
     def __init__(self, article_dict):
         self.date = article_dict['date']
@@ -53,19 +59,15 @@ class MyArticle:
         self.link = article_dict['link']
         self.article = article_dict['article']
 
-        article_dict['links'] = article_dict['links'].replace("\'", "\"")
-        list_links = []
-        for group1 in re.finditer(LINKS_TEMPLATE, article_dict['links']):
-            list_links.append(group1.group(1))
-        self.links = list_links
+
+        self.links = html_text_to_list_links(article_dict['links'])
 
 
     def __str__(self):
-        result_string_article = '\n'
-        result_string_article += "Title: {}\nDate: {}\nLink: {}\n\n{}\n\n".format(self.title, self.date, self.link,
+        result_string_article = "\nTitle: %s\nDate: %s\nLink: %s\n\n%s\n\n" % (self.title, self.date, self.link,
                                                                                   self.article)
         for link_idx, link in enumerate(self.links):
-            result_string_article += "[{}]: {}\n".format(link_idx + 1, link)
+            result_string_article += "[%d]: %s\n" % (link_idx + 1, link)
         result_string_article += '\n'
         return result_string_article
 

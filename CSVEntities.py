@@ -13,7 +13,7 @@ def csv_to_python(articles_list, csv_file):
     with open(csv_file, "r") as file:
         reader = csv.DictReader(file, FIELDNAMES, delimiter='\t')
         for items in reader:
-            r = ClassNews.MyArticle(dict(items))
+            r = ClassNews.Article(dict(items))
             articles_list_from_csv.append(r)
 
     union_list = articles_list_from_csv[:]
@@ -35,7 +35,7 @@ def return_news_to_date(input_date, csv_file, limit):
         reader = csv.DictReader(file, FIELDNAMES, delimiter='\t')
         match_counter = 0
         for items in reader:
-            article_from_file = ClassNews.MyArticle(dict(items))
+            article_from_file = ClassNews.Article(dict(items))
 
             date_time = parse(article_from_file.date)
             date_from_file = date_time.date()
