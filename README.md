@@ -37,12 +37,14 @@ JSON structure:
 ## Iteration 2
 to run rss parser on your computer you need to:
 1) clone repository from https://github.com/ElizabethUniverse/FinalTaskRssParser
-2) `$cd final_task\dist`
+2) `$cd final_task`
+3)  `$python setup.py sdist upload`
+4)  `$cd dist`
 3) `$pip install rss_reader-1.1.tar.gz`
 4) run `$rss_reader https://news.yahoo.com/rss` --limit 2 --verbose
 
 ## Iteration 3
-News is stored in the csv cache in following format.  
+News is stored in the csv cache in following format and with tab delimiter.
 
 `date    title    link   article   list_links`
 
