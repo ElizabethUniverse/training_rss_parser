@@ -1,21 +1,15 @@
-import glob
-from dominate import document
-from dominate.tags import *
 
-photos = glob.glob('photos/*.jpg')
+from jinja2 import Environment, FileSystemLoader
+
+
 def print_article_list_to_html(list_articles, path):
-    with document(title='RssReader') as doc:
-        for item in list_articles:
-            div("Title: %s" % item.title)
-            div("Date: %s" % item.date)
-            div( "Link: %s" % item.link)
-            div("%s" % item.article)
-            for idx, link in enumerate(item.links):
-                div("[%d]:%s" % (idx, link))
-            div()
-            # for path in range(5):
-            #     div(img(src=path), _class='photo')
+    html_stream = print_article_list(list_articles)
+    with open(path, "w", encoding='utf-8') as html:
+        html.write(html_stream)
 
 
-    with open('gallery.html', 'w') as f:
-        f.write(doc.render())
+def print_article_list(list_articles):
+    # directory with templates
+    env = Environment(loader=FileSystemLoader('.'))
+    template = env.get_template('template.html')
+    return template.render(articles=list_articles)

@@ -4,6 +4,7 @@ import requests
 import json
 import logging
 import sys
+from dataclasses import asdict
 
 import ClassNews
 import CSVEntities
@@ -52,8 +53,6 @@ def get_request(args_source, timeout=None):
     # Check status code
     status_code = rss_request.status_code
     logging.info("Status code {}".format(status_code))
-    # if status_code == 404:
-    #     raise requests.exceptions.HTTPError
     rss_request.raise_for_status()
 
     return rss_request
@@ -61,7 +60,7 @@ def get_request(args_source, timeout=None):
 def main():
     try:
         args = args_parser(sys.argv[1:])
-        res_dict_articles=[]
+        res_dict_articles = []
         logging_level = logging.CRITICAL
         if args.verbose:
             logging_level = logging.INFO
@@ -88,11 +87,11 @@ def main():
 
                 print("\nFeed: {}".format(main_title))
                 result_articles = ClassNews.dicts_to_articles(res_dict_articles)
+                if not (args.to_html or args.to_pdf):
+                    for article in result_articles:
+                        print(article)
 
-                for article in result_articles:
-                    print(article)
-
-                #res = CSVEntities.csv_to_python(result_articles, "datecsv.csv")
+                res = CSVEntities.csv_to_python(result_articles, "datecsv.csv")
             else:
                 logging.info(rss_request.headers['content-type'])
                 logging.warning('We received not an xml file from api, sorry')
@@ -101,9 +100,12 @@ def main():
         if args.date:
             logging.info('Print news by date: ')
             result_articles = CSVEntities.return_news_to_date(args.date, "datecsv.csv", args.limit)
+
             if result_articles:
                 for article in result_articles:
-                    res_dict_articles.append(article.__dict__)
+                    res_dict_articles.append(asdict(article))
+                    if not (args.to_html or args.to_pdf):
+                        print(article)
             else:
                 print("We don't have any news in cache %s"%args.date)
 
