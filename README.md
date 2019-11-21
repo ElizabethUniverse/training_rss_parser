@@ -1,18 +1,18 @@
 ## Iteration 1
-RSS reader it's command line utility, which receives RSS URL and prints result in convenient output format
+RSS reader is a command utility, which receives RSS URL and prints the result in convenient output format
 
-Input data has following interface:
+Input data has the following interface:
 
 `rss_reader.py source [-h] [--version] [--verbose] [--json] [--limit LIMIT]`
 ````
 positional arguments:
-source - that's news API
-optionals arguments:
--h - provides common information about our rss parser
---version - print in stdout current version
---verbose - print all logs in stdout
---json - print news in JSON format
---limit LIMIT - limit amount of news topics
+source - URL which provides a RSS feed
+optional arguments:
+-h - prints this help page
+--version - prints in stdout current version
+--verbose - prints all logs in stdout
+--json - prints news in JSON format
+--limit LIMIT - limits the amount of news entries in the output 
 ````
 JSON structure:
 ```
@@ -41,15 +41,18 @@ to run rss parser on your computer you need to:
 3)  `$python setup.py sdist upload`
 4)  `$cd dist`
 3) `$pip install rss_reader-1.1.tar.gz`
-4) run `$rss_reader https://news.yahoo.com/rss` --limit 2 --verbose
+4) run `$rss_reader https://news.yahoo.com/rss --limit 2 --verbose`
+
 
 ## Iteration 3
 News is stored in the csv cache in following format and with tab delimiter.
 
 `date    title    link   article   list_links`
 
-To run application with updates:
+Now we are searching for the news in the cache with O(n) complexity. But in the near future we plan to optimize this process.
+
+If you want to receive news for the 15/11/2019, please enter the following command in the command line
 
 `$python rss_reader.py https://news.yahoo.com/rss --date 20191115`
 
---date argument works without internet connection and with --verbose, --json, --limit LIMIT arguments the same way 
+--date argument works without internet connection and with --verbose, --json, --limit LIMIT arguments the same way.
