@@ -16,7 +16,7 @@ optional arguments:
 ````
 JSON structure:
 ```
-{
+[
 	{
 		"title":   "A black man was put in handcuffs after a police officer stopped him on a trainplatform because he was eating",
 		"article": "Bay Area Rapid Transit police said Steve Foster, of Concord, California,violated state law by eating a sandwich on a BART station's platform.  ",
@@ -31,7 +31,7 @@ JSON structure:
 		...
 	},
 	...
-}
+]
 ```
 
 ## Iteration 2
@@ -56,3 +56,14 @@ If you want to receive news for the 15/11/2019, please enter the following comma
 `$python rss_reader.py https://news.yahoo.com/rss --date 20191115`
 
 --date argument works without internet connection and with --verbose, --json, --limit LIMIT arguments the same way.
+
+##Iteration 4 
+News can be converted to pdf or html.
+
+If you want to convert news to pdf:
+
+`$python rss_reader.py https://news.yahoo.com/rss --to-pdf path`
+
+to html:
+
+`$python rss_reader.py https://news.yahoo.com/rss --to-html path`
